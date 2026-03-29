@@ -5,529 +5,308 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>إلى ملكتي شهد ❤️</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Amiri:ital,wght@0,700;1,700&family=Lateef&display=swap" rel="stylesheet">
-   <style>
-    /* 1. المتغيرات والأساسيات */
+    <style>
     :root {
         --primary: #ff1f5a;
         --secondary: #ff00d4;
         --gold: #ffd700;
         --bg: #050101;
         --text: #fff0f3;
-        --card-bg: rgba(255, 31, 90, 0.08);
+        --card-bg: rgba(255, 31, 90, 0.12);
         --font-main: 'Cairo', sans-serif;
         --font-poetry: 'Amiri', serif;
     }
 
     body {
-        margin: 0;
-        background-color: var(--bg);
-        background-image: radial-gradient(circle at center, #1a0208 0%, #050101 100%);
-        color: var(--text);
-        font-family: var(--font-main);
-        overflow-x: hidden;
-        text-align: center;
-        scroll-behavior: smooth;
+        margin: 0; background-color: var(--bg); color: var(--text);
+        font-family: var(--font-main); overflow-x: hidden; text-align: center; scroll-behavior: smooth;
     }
 
-    /* 2. نظام القلوب المتحركة */
-    #heart-container {
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        pointer-events: none;
-        z-index: 1;
+    #heart-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+    .heart { 
+        position: absolute; color: var(--primary); animation: float 6s linear infinite; 
+        opacity: 0; font-size: 40px; filter: drop-shadow(0 0 12px var(--primary));
     }
-
-    .heart {
-        position: absolute;
-        color: var(--primary);
-        filter: drop-shadow(0 0 5px var(--primary));
-        animation: float 4s linear infinite;
-        opacity: 0;
-    }
-
     @keyframes float {
-        0% { transform: translateY(100vh) rotate(0deg) scale(0); opacity: 0; }
-        20% { opacity: 0.8; }
-        100% { transform: translateY(-10vh) rotate(360deg) scale(1.5); opacity: 0; }
+        0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+        20% { opacity: 1; }
+        100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
     }
 
-    /* 3. تنسيق الأقسام والكروت */
-    .section {
+    .section { display: none; min-height: 100vh; width: 100%; padding: 60px 20px; box-sizing: border-box; flex-direction: column; justify-content: center; align-items: center; position: relative; z-index: 2; }
+    #countdown-screen { display: flex; }
+
+    #moments-list {
         display: flex;
-        justify-content: center;
-        align-items: center;
         flex-direction: column;
-        min-height: 100vh;
+        align-items: center;
+        gap: 60px;
         width: 100%;
-        padding: 40px 20px;
-        box-sizing: border-box;
-        position: relative;
-        z-index: 2;
+        max-width: 900px;
+        margin: 40px auto;
     }
 
     .moments-card {
-        background: var(--card-bg);
-        border: 1px solid rgba(255, 31, 90, 0.2);
-        border-radius: 30px;
-        padding: 20px;
-        margin: 0 auto 40px;
+        background: var(--card-bg); 
+        border: 2px solid rgba(255, 31, 90, 0.3);
+        border-radius: 40px; 
+        padding: 25px; 
+        width: 95%; 
         backdrop-filter: blur(15px);
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
-        transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        width: 100%;
-        max-width: 450px; /* عرض مثالي يلم الصورة والكلام */
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+        box-shadow: 0 15px 40px rgba(255, 31, 90, 0.2);
     }
 
-    .moments-card:hover {
-        transform: translateY(-10px);
-        border-color: var(--secondary);
-        box-shadow: 0 0 30px rgba(255, 31, 90, 0.3);
+    /* التعديل هنا: الصور هتظهر كاملة بدون قص */
+    .media-container { 
+        width: 100%; 
+        border-radius: 20px; 
+        overflow: hidden; 
+        background: transparent; 
+        margin-bottom: 25px;
     }
-
-    /* 4. حل مشكلة الصور الطويلة والفيديوهات (Smart Fit) */
-    .media-container {
-        position: relative;
-        width: 100%;
-        height: 350px; /* ارتفاع موحد ومظبوط لكل الكروت */
-        border-radius: 20px;
-        overflow: hidden;
-        margin-bottom: 20px;
-        background: #000; /* خلفية سوداء لو الصورة مش مالية المكان */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border: 2px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .media-container img, 
-    .media-container video {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain; /* يظهر الصورة كاملة بدون تطويل أو قص */
+    .media-container img, .media-container video { 
+        width: 100%; 
+        height: auto; /* عشان تظهر كاملة بالطول */
         display: block;
-        transition: 0.5s;
+        border-radius: 15px;
+        border: 2px solid rgba(255, 31, 90, 0.5);
     }
 
-    /* 5. زرار تشغيل الفيديو الفاخر */
-    .video-overlay-btn {
-        position: absolute;
-        top: 50%; left: 50%;
-        transform: translate(-50%, -50%);
-        background: linear-gradient(45deg, var(--primary), var(--secondary));
-        color: white;
-        border: none;
-        width: 60px; height: 60px;
-        border-radius: 50%;
-        font-size: 22px;
-        cursor: pointer;
-        z-index: 10;
-        box-shadow: 0 0 20px var(--primary);
-        display: flex; align-items: center; justify-content: center;
-        transition: 0.3s;
-    }
+    .moment-date { color: var(--gold); font-size: 1.6rem; font-weight: bold; margin-bottom: 15px; display: block; }
+    .moment-desc { font-size: 1.4rem; line-height: 1.8; color: #ffe0e6; padding: 0 10px; }
 
-    .video-overlay-btn:hover {
-        transform: translate(-50%, -50%) scale(1.15);
-    }
-
-    /* 6. النصوص والشعر */
-    #typing-text {
-        font-family: var(--font-poetry);
-        font-size: clamp(1.5rem, 5vw, 2.2rem);
-        line-height: 1.8;
-        padding: 30px;
-        text-shadow: 0 0 15px var(--primary);
-        background: rgba(255, 255, 255, 0.02);
-        border-radius: 25px;
-    }
-
-    .moments-card h3 {
-        color: var(--gold);
-        margin: 10px 0;
-        font-size: 1.4rem;
-    }
-
-    .moments-card p {
-        font-size: 1.05rem;
-        line-height: 1.6;
-        color: #ffeef2;
-        margin: 0;
-        padding: 0 5px;
-    }
-
-    /* 7. الأزرار التفاعلية (تأثير النبض) */
     .gift-btn {
         background: linear-gradient(45deg, var(--primary), var(--secondary));
-        color: white;
-        border: none;
-        padding: 16px 45px;
-        border-radius: 50px;
-        font-size: 1.3rem;
-        font-weight: bold;
-        cursor: pointer;
-        box-shadow: 0 10px 25px rgba(255, 31, 90, 0.4);
-        margin: 20px 0;
-        transition: 0.4s;
-        animation: pulse 2s infinite;
+        color: white; border: none; padding: 20px 60px; border-radius: 50px;
+        font-size: 1.5rem; font-weight: bold; cursor: pointer; margin: 40px 0;
+        box-shadow: 0 10px 25px rgba(255, 31, 90, 0.6);
     }
 
-    @keyframes pulse {
-        0% { box-shadow: 0 0 0 0 rgba(255, 31, 90, 0.7); }
-        70% { box-shadow: 0 0 0 15px rgba(255, 31, 90, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(255, 31, 90, 0); }
+    #typing-text { 
+        font-family: var(--font-poetry); font-size: 2.2rem; line-height: 2; 
+        white-space: pre-line; padding: 30px; color: #fff;
+    }
+    
+    .final-img {
+        width: 90%; 
+        max-width: 500px; 
+        height: auto; 
+        aspect-ratio: 4/5;
+        object-fit: cover; 
+        border-radius: 50% / 40%;
+        border: 10px solid white; 
+        box-shadow: 0 0 50px var(--primary);
+    }
+    
+    .surprise-box {
+        background: rgba(255,255,255,0.05); padding: 40px; border-radius: 30px;
+        border: 2px solid var(--gold); max-width: 650px;
     }
 
-    /* 8. بانر عيد الميلاد */
-    .bday-banner {
-        background: linear-gradient(45deg, var(--gold), #fff, var(--secondary));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        font-size: clamp(2.5rem, 10vw, 4.5rem);
-        font-weight: 900;
-        filter: drop-shadow(0 0 10px rgba(255,215,0,0.5));
-    }
-
-    /* الحالات المخفية */
-    #surprise-content, #main-experience, #timeline-section, #video-section { display: none; }
-
-    /* تحسينات الموبايل الصغير */
-    @media (max-width: 480px) {
-        .media-container { height: 280px; }
-        .moments-card { padding: 15px; }
-        #typing-text { font-size: 1.3rem; padding: 15px; }
-    }
-</style>
+    .hidden-surprise { opacity: 0; transition: opacity 1.5s; }
+    </style>
 </head>
 <body>
 
-    <audio id="poetry-audio" src="قصيدة السيدة الأولى.mp3"></audio>
     <div id="heart-container"></div>
 
     <div id="countdown-screen" class="section">
-        <h2 style="color: var(--primary)">عشانك يا شهد.. استني اللحظة دي ❤️</h2>
-        <div id="timer" style="font-size: 3.5rem; font-weight: bold;">00:00:05</div>
-        <p>(دوسي في أي مكان في الشاشة عشان الصوت يشتغل)</p>
+        <h2 style="color: var(--primary); font-size: 2.5rem;">عشانك يا ملكة قلبي.. استني اللحظة دي ❤️</h2>
+        <div id="timer" style="font-size: 6rem; font-weight: bold; color: var(--gold);">5</div>
     </div>
 
-    <div id="surprise-content">
-        <div class="section" id="poetry-section">
-            <div id="typing-text"></div>
-            <button id="start-journey-btn" class="gift-btn" style="display:none;" onclick="startFullExperience()">دخول لعالم شهد.. ❤️</button>
-        </div>
+    <div id="poetry-section" class="section">
+        <div id="typing-text"></div>
+        <button id="start-journey-btn" class="gift-btn" style="display:none;" onclick="showBday()">نكمل الحكاية؟ ❤️</button>
+    </div>
 
-        <div id="main-experience">
-            <div id="bday-surprise" class="section">
-                <div id="bday-text" class="bday-banner">كل سنة وأنتِ طيبة يا أجمل شهد في الدنيا ❤️</div>
-                <p style="font-size: 1.5rem;">اليوم ده اتولد فيه سعادتي كلها..</p>
-                <button class="gift-btn" onclick="showTimeline()">شوفي حكايتي معاكي ✨</button>
-            </div>
+    <div id="bday-surprise" class="section">
+        <h1 style="font-size: 4rem; color: var(--gold);">كل سنة وأنتِ منورة دنيتي يا شهد ❤️</h1>
+        <p style="font-size: 2rem; max-width: 750px;">النهاردة اتولدت فيه الضحكة اللي بتصبرني على الدنيا، والروح اللي خلت لحياتي طعم تاني خالص.</p>
+        <button class="gift-btn" onclick="showTimeline()">شوفي ذكرياتنا سوا ✨</button>
+    </div>
 
-            <div id="timeline-section" class="section">
-                <h1 style="font-family: var(--font-poetry); font-size: 3rem; color: var(--primary);">حكايتي معاكي 📖</h1>
-                <div class="timeline-container" id="moments-list"></div>
-                <button class="gift-btn" onclick="showVideo()">دوسي للمفاجأة الكبيرة 🎥</button>
-            </div>
+    <div id="timeline-section" class="section">
+        <h1 style="color: var(--primary); font-size: 3.5rem; margin-bottom: 20px;">حكايتي معاكي بالثانية والدقيقة 📖</h1>
+        <div id="moments-list"></div>
+        <button class="gift-btn" onclick="showVideo()">دوسي للمفاجأة الكبيرة 🎥</button>
+    </div>
 
-            <div id="video-section" class="section">
-    <div style="width: 100%; max-width: 700px; border: 4px solid var(--primary); border-radius: 20px; overflow: hidden; background: #000; box-shadow: 0 0 20px var(--primary);">
-        
-        <video id="main-video" width="100%" height="auto" controls poster="poster-image.jpg" style="display: block;">
+    <div id="video-section" class="section">
+        <video id="main-video" width="90%" style="border: 5px solid var(--primary); border-radius: 25px;" controls>
             <source src="فيلمي ٢٤.mp4" type="video/mp4">
-            متصفحك لا يدعم تشغيل الفيديو..
         </video>
-
+        <button class="gift-btn" onclick="nextSurprise(1)">شوفي اللي بعده 📜</button>
     </div>
 
-    <h2 style="margin-top: 30px; color: gold; font-family: var(--font-poetry); text-shadow: 0 0 10px gold;">
-        أنتِ ملكة قلبي للأبد ❤️
-    </h2>
-
-    <div id="post-video-btn-container"></div>
-</div>
-
-            <div id="surp-1" class="section hidden-surprise">
-                <div style="border: 5px double gold; padding: 40px; border-radius: 20px; background: rgba(255,215,0,0.05);">
-                    <h1 style="color: gold; font-family: 'Amiri';">📜 شهادة ملكية قلبي</h1>
-                    <p style="font-size: 1.5rem;">نُقر ونعترف نحن "قلب أحمد" بأن الآنسة <b>شهد</b> هي الملكة الوحيدة والمسيطرة على كل نبضة فيه للأبد.</p>
-                </div>
-                <button class="gift-btn" onclick="nextSurprise(2)">لسه في حاجة كمان؟ ✨</button>
-            </div>
-
-            <div id="surp-2" class="section hidden-surprise">
-                <h2>تفتكري مين أكتر واحد في الكون ده بيحبك؟ 🧐</h2>
-                <button class="gift-btn" onclick="alert('صح! مفيش غيري ❤️'); nextSurprise(3)">أنا طبعاً</button>
-                <button class="gift-btn" onclick="alert('برضو أنا.. 😂');">أنا برضه</button>
-            </div>
-
-            <div id="surp-3" class="section hidden-surprise">
-                <div style="font-size: 100px;">💍</div>
-                <h2>وعدي ليكي..</h2>
-                <p style="font-size: 1.3rem;">"هفضل سندك وضهرك، وهفضل أحبك في كل حالاتك."</p>
-                <button class="gift-btn" style="background: gold; color: black;" onclick="nextSurprise(4)">آخر حاجة والله.. دوسي 🙈</button>
-            </div>
-
-            <div id="surp-4" class="section hidden-surprise">
-                <img src="Screenshot_٢٠٢٦٠٣٢٩_١١٤٥٢١_Gallery.jpg" style="width: 300px; border-radius: 50%; border: 5px solid var(--primary);">
-                <h1 style="font-family: 'Lateef'; font-size: 4rem; color: white;">انتي.. ملكة قلبي الوحيدة ❤️</h1>
-            </div>
+    <div id="surp-1" class="section hidden-surprise">
+        <div class="surprise-box">
+            <h1 style="color: gold; font-size: 3rem;">📜 وثيقة حب أبدية</h1>
+            <p style="font-size: 1.6rem; line-height: 2;">أنا "أحمد" بعترف قدام ربنا وقدام نفسي إنك أغلى ما أملك. الشهادة دي مش ورق، دي وعد مني إني أفضل حارس لقلبك، وإني مسبش الزعل يعرف طريق ليكي أبداً. انتي ملكة متوجة في مملكتي الخاصة.</p>
         </div>
+        <button class="gift-btn" onclick="nextSurprise(2)">المفاجأة اللي بعدها ✨</button>
     </div>
 
-    <script>
-// ==============================
-// 1. إعدادات الميديا (الأصوات)
-// ==============================
-// ==============================
-// 1. التأكد من المصادر (Sources)
-// ==============================
-const poetryAudio = new Audio('قصيدة السيدة الأولى.mp3');
+    <div id="surp-2" class="section hidden-surprise">
+        <div class="surprise-box" style="border-color: var(--primary);">
+            <h2>سؤال مهم جداً..</h2>
+            <p style="font-size: 1.8rem;">تفتكري فيه حد في الكوكب ده ممكن يحبك، ويخاف عليكي، ويشيلك في عينه زي ما أنا بعمل؟</p>
+        </div>
+        <button class="gift-btn" onclick="nextSurprise(3)">أنا لوحدي اللي بعشقك ❤️</button>
+    </div>
+
+    <div id="surp-3" class="section hidden-surprise">
+        <div style="font-size: 8rem;">💍</div>
+        <h2 style="color: var(--gold);">وعدي الأبدي ليكي</h2>
+        <p style="font-size: 1.7rem; max-width: 600px;">هفضل سندك وقت التعب، والضحكة وقت الحزن، والبيت اللي بترتاحي فيه من تعب الدنيا. هفضل أحبك في كل حالاتك.</p>
+        <button class="gift-btn" onclick="nextSurprise(4)">أهم حاجة في كل ده 🙈</button>
+    </div>
+
+    <div id="surp-4" class="section hidden-surprise">
+        <img src="Screenshot_٢٠٢٦٠٣٢٩_١١٤٥٢١_Gallery.jpg" class="final-img">
+        <h1 style="font-size: 4.5rem; font-family: 'Lateef';">"لو لفيت الدنيا دي كلها، مش هلاقي قلب يحضني زي قلبك.. انتي رزقي من ربنا، وأجمل هدية جاتلي في حياتي." ❤️</h1>
+    </div>
+
+<script>const poetryAudio = new Audio('قصيدة السيدة الأولى.mp3');
 const timelineAudio = new Audio('13.Rooh_Alby.mp3');
-// اتأكد إن الملف ده موجود بنفس الاسم ده بالظبط في الفولدر
-const lastGiftAudio = new Audio('Albumaty.Com_amrw_dyab_ma_tklksh.mp3'); 
+const lastGiftAudio = new Audio('Albumaty.Com_amrw_dyab_ma_tklksh.mp3');
 
-timelineAudio.loop = true;
-
-// ==============================
-// 4. الدالة المعدلة للزرار الأخير (إجبار التشغيل)
-// ==============================
-function nextSurprise(num) {
-    // 1. نخرس كل الأصوات اللي شغالين حالياً
-    stopAllMedia(); 
-    
-    // 2. تشغيل أغنية عمرو دياب "ما تكلّمش"
-    // بنعمل Reset للوقت عشان تبدأ من الأول لو داس كذا مرة
-    lastGiftAudio.currentTime = 0; 
-    lastGiftAudio.volume = 1.0; // نضمن إن الصوت عالي
-    
-    let playPromise = lastGiftAudio.play();
-
-    if (playPromise !== undefined) {
-        playPromise.then(_ => {
-            console.log("الأغنية اشتغلت بنجاح!");
-        }).catch(error => {
-            // لو المتصفح منعها.. هنشغلها أول ما يلمس الشاشة
-            console.log("المتصفح منع التشغيل التلقائي.. هتشتغل مع أول لمسة");
-            document.body.addEventListener('click', () => {
-                lastGiftAudio.play();
-            }, { once: true });
-        });
-    }
-
-    // 3. إظهار السيكشن الجديد
-    if (num === 1) {
-        document.getElementById('video-section').style.display = 'none';
-    } else {
-        const prev = document.getElementById(`surp-${num-1}`);
-        if(prev) prev.style.display = 'none';
-    }
-    
-    const next = document.getElementById(`surp-${num}`);
-    if(next) {
-        next.style.display = 'flex';
-        setTimeout(() => {
-            next.style.opacity = '1';
-            next.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
-    }
+function stopAllSounds() {
+    poetryAudio.pause(); 
+    timelineAudio.pause(); 
+    lastGiftAudio.pause();
+    const vids = document.querySelectorAll('video');
+    vids.forEach(v => v.pause());
 }
 
-// ==============================
-// 2. نظام القصيدة والكتابة (المعدل بالعامية المصرية)
-// ==============================
-function startPoetryExperience() {
+let count = 5;
+const timerInterval = setInterval(() => {
+    count--; 
+    document.getElementById('timer').innerText = count;
+    if(count <= 0) { 
+        clearInterval(timerInterval); 
+        startPoetry(); 
+    }
+}, 1000);
+
+function startPoetry() {
     document.getElementById('countdown-screen').style.display = 'none';
-    document.getElementById('surprise-content').style.display = 'block';
+    document.getElementById('poetry-section').style.display = 'flex';
+    poetryAudio.play().catch(() => {});
+    
+    const text = `يا شهد.. يا اللي كلامك نغم بيطرب وداني،
+يا اللي شوفتك بتنسيني كل همي وأحزاني.
+من يوم ما دخلتي حياتي والدنيا بقى لها لون،
+بقيتي انتي الشروق، وانتي القمر، وانتي الكون.
 
-    poetryAudio.play().catch(e => console.log("الصوت محتاج دوسة"));
+عنيكي حكاية طويلة محتاجة مية كتاب،
+ضحكتك بتمحي من قلبي أي خوف أو عذاب.
+يا ملكة قاعدة على عرش قلبي ومتربعة،
+حبك في دمي بيجري، وبيه الروح متشبعة.
 
-    // الرسالة التحذيرية اللطيفة قبل الشعر
-    const warningMsg = document.createElement('p');
-    warningMsg.innerHTML = "اسمعي القصيدة للأخر يا شوشو.. عارف إن فضولك هيجننك وعايزة تدوسي على الزرار، بس اسمعي كل كلمة عشان طالعة من قلبي ليكي مخصوص.. ❤️";
-    warningMsg.style.cssText = "color: var(--gold); font-style: italic; margin-bottom: 20px; font-size: 0.9rem; border-bottom: 1px solid #555; padding-bottom: 10px;";
-    document.getElementById('typing-text').before(warningMsg);
-
-    const poetryText = `بصي يا ستي.. 
-يا اللي جمالك سحب روحي مني في ثانية،
-ضحكتك دي لوحدها في كفة، وباقي الدنيا في كفة تانية.
-عنيكي؟ دي بحر غريق، وأنا غرقان فيهم ومبسوط،
-نظرة واحدة منهم بتخلي قلبي يحيى بعد ما كان بيموت.
-
-وشفايفك يا لهوي على الرقة واللون اللي بيجنن،
-رسمتهم حكاية، تخلي العاقل في حبك يتفنن.
-كل تفصيلة فيكي مرسومة بالمللي يا ملكة قلبي،
-أنا محظوظ بيكي، ومحسود عليكي، وده أحلى ذنبي.
-
-انتي مش بس حلوة، انتي الحلاوة اتعلمت منك،
-والقمر لما شافك، استخبى ودارى وشه عنك.
-يا أغلى من عيني، وأجمل ما شافت عيني،
-خليكي جنبي دايماً، ده انتي اللي بتحلي سنيني.. ❤️`;
+لو قولت بحبك مليون مرة مش هكفيكي،
+ده أنا عايز عمري كله أعيشه بس عشان أرضيكي.
+انتي السيدة الأولى، وانتي الأخيرة، وانتي الأساس،
+يا أغلى من الدهب، ويا أنقى من كل الناس. ❤️`;
 
     let i = 0;
-    const elem = document.getElementById('typing-text');
-    if(elem) {
-        elem.innerHTML = ""; 
-        function type() {
-            if (i < poetryText.length) {
-                elem.innerHTML += poetryText.charAt(i);
-                i++;
-                // سرعة الكتابة خليتها أهدى شوية عشان تعيش اللحظة
-                setTimeout(type, 90); 
-            } else {
-                // الزرار مش هيظهر غير لما تخلص قراءة وسمع
-                const startBtn = document.getElementById('start-journey-btn');
-                if(startBtn) {
-                    startBtn.style.display = 'block';
-                    startBtn.innerHTML = "شوفتي خلصت أهو.. دوسي بقى يا قمري ✨";
-                }
-            }
-        }
-        type();
-    }
-}
-
-// ==============================
-// 3. نظام التايم لاين (حكايتي معاكي)
-// ==============================
-const moments = [
-    { t: "14/11/2025", m: "أول مرة شوفتك فيها وأول مرة عيني جات في عينك.. اللحظة اللي غيرت حياتي ❤️. ورغم إن اللحظة دي ماكنش فيها كاميرا، بس دي كانت أول صورة تبعتيها ليا بعدها (بالسناب)، وفضلتي في عيني أجمل واحدة في الدنيا 🖤", img: "Screenshot_٢٠٢٥١٢١٤_٠٩٠٩٢٢_Snapchat.jpg" },
-    { t: "14/12/2025", m: "أول مرة تجيبي الحجاب الأسود.. وكان شيك جداً عليكي يا ملكة السواد 🖤", img: "Snapchat-274752122.jpg" },
-    { t: "21/12/2025", m: "أول مرة قولتيلي فيها 'يا جلبي'.. الكلمة دي لسه بترن في ودني وبتحلي دنيتي 💞", img: "Screenshot_٢٠٢٦٠٣٢٩_١١١٣٥٧_Gallery.jpg" },
-    { t: "25/12/2025", m: "أول خروجة خرجنا فيها مع بعض.. كنتي زي القمر ساعتها وخاطفة قلبي بكل تفاصيلك ❤️✨", img: "Snapchat-9527544.jpg" },
-    { t: "08/01/2026", m: "أول مرة نصور فيديو تيك توك مع بعض.. ضحكتنا سوا كانت أحلى حاجة في اليوم 🎥❤️", img: "Snapchat-415612030.jpg" },
-    { t: "11/01/2026", m: "يوم ما جبتي الخمار الأبيض.. كنتي فيه زي الملاك بالظبط 🤍", img: "IMG-20260123-WA0025.jpg" },
-    { t: "23/01/2026", m: "يوم خمار الفوشيا.. اللون ده كان منور وشك ومخليكي قمر 💗", img: "Snapchat-1758920751.jpg" },
-    { t: "26/01/2026", m: "اليوم اللي فسحتك فيه في الحديقة الدولية.. أحلى خروجة وأحلى وقت قضيناه وسط الزرع 🌿❤️", img: "Screenshot_٢٠٢٦٠٣٢٩_٠٥٤٠٢٢_Gallery.jpg" },
-    { t: "03/02/2026", m: "يوم الخمار النبيتي.. فخامة وشياكة ملهومش حل ❤️", img: "Snapchat-1435564129.jpg" },
-    { t: "15/02/2026", m: "أول فيديو تيك توك تعمليه مخصوص عشاني.. فرحت بيه جداً وبكل كلمة فيه 🎥💖", img: "VID-20260215-WA0069.mp4" },
-    { t: "24/02/2026", m: "يوم ما جبت لك الأرنب.. كان يوم كيوت زيك بالظبط 🐰🤍", img: "VID-20260224-WA0073.mp4" },
-    { t: "01/03/2026", m: "اليوم اللي قولتيلي فيه 'بحبك'.. وكمان اليوم اللي جبت لك فيه الخاتم اللي كان عاجبك ولبستيه في إيدك 💍❤️", img: "Screenshot_٢٠٢٦٠٣٢٩_١١٠١٢٠_Gallery.jpg" },
-    { t: "03/03/2026", m: "يوم ما صورتك عند بتاع التصوير.. كنتي طالعة برنسيسة في الكادر 📸✨", img: "Screenshot_٢٠٢٦٠٣٢٩_١١٠٧٠٨_Gallery.jpg" },
-    { t: "16/03/2026", m: "يوم ما اديتك العيدية بوكيه الفلوس.. كانت أقل حاجة أعبر بيها عن فرحتي بوجودك في حياتي 💐💵❤️", img: "aladyh.mp4" },
-    { t: "25/03/2026", m: "يوم ما خطفتك في المطر.. البحر والفيو والبركة اللي كانت مغرقانا، كان يوم من خيال 🌊🌧️", img: "IMG-20260323-WA0052.jpg" }
-];
-
-function showTimeline() {
-    stopAllMedia(); // وقف القصيدة قبل ما تشغل أغنية التايم لاين
-    timelineAudio.play();
-
-    const timelineSec = document.getElementById('timeline-section');
-    timelineSec.style.display = 'flex';
-    const list = document.getElementById('moments-list');
-    list.innerHTML = ""; 
-
-    moments.forEach((m, index) => {
-        let mediaHtml = "";
-        const path = m.img.toLowerCase();
-        const isVideo = path.includes('.mp4') || path.includes('.mov') || path.includes('.webm');
-        
-        if (isVideo) {
-            mediaHtml = `
-                <div class="media-container" style="position:relative; background:#000;">
-                    <video id="vid-${index}" playsinline preload="metadata" style="width:100%;">
-                        <source src="${m.img}">
-                    </video>
-                    <button class="video-overlay-btn" onclick="toggleVideo(event, ${index})">▶</button>
-                </div>`;
+    const typingContainer = document.getElementById('typing-text');
+    function type() {
+        if(i < text.length) {
+            typingContainer.innerHTML += text.charAt(i) === '\n' ? '<br>' : text.charAt(i);
+            i++; 
+            setTimeout(type, 70);
         } else {
-            mediaHtml = `
-                <div class="media-container">
-                    <img src="${m.img}" onerror="this.src='https://via.placeholder.com/400x300?text=Love'">
-                </div>`;
+            document.getElementById('start-journey-btn').style.display = 'block';
         }
-
-        list.innerHTML += `
-            <div class="moments-card">
-                ${mediaHtml}
-                <h3 style="color:var(--gold); font-family:var(--font-poetry);">${m.t}</h3>
-                <p>${m.m}</p>
-            </div>`;
-    });
-    timelineSec.scrollIntoView({ behavior: 'smooth' });
-}
-
-// دالة التشغيل الذكية: توقف الأغنية وتشغل الفيديو والعكس
-function toggleVideo(event, index) {
-    const video = document.getElementById(`vid-${index}`);
-    const btn = event.target;
-    
-    if (video.paused) {
-        timelineAudio.pause(); // وقف الأغنية الأساسية
-        
-        // وقف أي فيديوهات تانية لو شغالة
-        document.querySelectorAll('video').forEach(v => { if(v !== video) v.pause(); });
-        
-        video.play();
-        btn.innerHTML = "⏸";
-        btn.style.opacity = "0.3";
-        
-        // لو الفيديو خلص لوحده.. رجع الأغنية
-        video.onended = () => {
-            btn.innerHTML = "▶";
-            btn.style.opacity = "1";
-            timelineAudio.play();
-        };
-    } else {
-        video.pause();
-        btn.innerHTML = "▶";
-        btn.style.opacity = "1";
-        timelineAudio.play(); // رجع الأغنية لما توقف الفيديو
     }
+    type();
 }
 
-// ==============================
-// 4. التحكم في باقي المفاجآت والزرار الأخير
-// ==============================
-function startFullExperience() {
-    stopAllMedia();
+// دي الدالة اللي كانت معلقة.. اتصلحت اهي
+function showBday() {
+    stopAllSounds();
     document.getElementById('poetry-section').style.display = 'none';
-    document.getElementById('main-experience').style.display = 'block';
     document.getElementById('bday-surprise').style.display = 'flex';
 }
 
-function nextSurprise(num) {
-    stopAllMedia();
+function showTimeline() {
+    stopAllSounds(); 
+    timelineAudio.play();
+    document.getElementById('bday-surprise').style.display = 'none';
+    document.getElementById('timeline-section').style.display = 'flex';
     
-    // تشغيل أغنية الهدية الأخيرة (الزرار الأخير)
-    lastGiftAudio.play().catch(e => {});
+    const list = document.getElementById('moments-list');
+    list.innerHTML = ""; // تنظيف القائمة قبل البناء
+    
+    const moments = [
+        { t: "14/11/2025", m: "اللحظة اللي التاريخ وقف عندها.. أول مرة عيني جت في عينك، ومن ساعتها وأنا مش عارف أشيلك من خيالي. كانت البداية لأجمل قصة حب في حياتي. ❤️", img: "Screenshot_٢٠٢٥١٢١٤_٠٩٠٩٢٢_Snapchat.jpg" },
+        { t: "14/12/2025", m: "ملكة السواد والشياكة.. الحجاب الأسود عليكي كان له سحر خاص، كنتي هادية وزي القمر، واليوم ده فضل محفور في ذاكرتي بكل تفاصيله. 🖤", img: "Snapchat-274752122.jpg" },
+        { t: "21/12/2025", m: "لما الدنيا كلها سكتت وسمعت منك 'يا جلبي'.. الكلمة دي هزت كياني وخلتني أحس إني ملكت الدنيا وما فيها. مكنتش مجرد كلمة، كان اعتراف بالحب. 💞", img: "Screenshot_٢٠٢٦٠٣٢٩_١١١٣٥٧_Gallery.jpg" },
+        { t: "25/12/2025", m: "أول مرة نخرج سوا والوقت يسرقنا.. كنت مش عايز اليوم يخلص، ضحكتك في اليوم ده كانت كفيلة تخلي الشتا يبقى ربيع في عيني. ✨", img: "Snapchat-9527544.jpg" },
+        { t: "08/01/2026", m: "جنوننا سوا في أول فيديو تيك توك.. كنا بنضحك من قلبنا، وعرفت وقتها إننا لبعض في كل حاجة، حتى في الهزار واللعب. 🎥❤️", img: "Snapchat-415612030.jpg" },
+        { t: "11/01/2026", m: "الملاك نزل الأرض بالخمار الأبيض.. مكنتش مصدق إن فيه حد بالجمال والنقاء ده، كنتي بجد منورة زي الشمس في عز النهار. 🤍", img: "IMG-20260123-WA0025.jpg" },
+        { t: "23/01/2026", m: "الخمار الفوشيا والرقة اللي مفيش زيها.. كل لون بتلبسيه بيحليكي، بس الفوشيا كان فيه طاقة وحيوية زيك بالظبط. 💗", img: "Snapchat-1758920751.jpg" },
+        { t: "26/01/2026", m: "يوم الحديقة الدولية.. جرينا وضحكنا واتصورنا أحلى صور، اليوم ده كان مليان راحة نفسية عشان كنت جنبك. 🌿", img: "Screenshot_٢٠٢٦٠٣٢٩_054022_Gallery.jpg" },
+        { t: "03/02/2026", m: "هيبة وعظمة الخمار النبيتي.. كنتي برنسيسة بجد، شياكة ورقي ملوش حدود، ومكنتش قادر أشيل عيني من عليكي. ❤️", img: "Snapchat-1435564129.jpg" },
+        { t: "15/02/2026", m: "المفاجأة اللي فرحت قلبي.. فيديو تيك توك مخصوص عشانك ليا، حسيت وقتها قد إيه أنا غالي عندك زي ما انتي غالية عندي. 💖", img: "VID-20260215-WA0069.mp4" },
+        { t: "24/02/2026", m: "يوم الأرنب الكيوت.. مفيش أرق ولا ألطف منك في الدنيا، كنتي طفلة وبريئة جداً في اليوم ده. 🐰🤍", img: "VID-20260224-WA0073.mp4" },
+        { t: "01/03/2026", m: "اليوم اللي استنيته عمري كله.. قولتيلي 'بحبك' ولبستك الخاتم، اليوم ده كان بداية حياتي الحقيقية معاكي يا شريكة عمري. 💍❤️", img: "Screenshot_٢٠٢٦٠٣٢٩_١١٠١٢٠_Gallery.jpg" },
+        { t: "03/03/2026", m: "البرنسيسة قدام الكاميرا.. كنتي واثقة في نفسك وزي المانيكان، وأنا كنت واقف فخور بيكي وبجمالك اللي ملوش مثيل. 📸", img: "Screenshot_٢٠٢٦٠٣٢٩_١١٠٧٠٨_Gallery.jpg" },
+        { t: "16/03/2026", m: "بوكيه الفلوس والعيدية.. حاجة بسيطة تعبر عن حبي ليكي، بس انتي قيمتك عندي بمال الدنيا كله وما فيه. 💐", img: "aladyh.mp4" },
+        { t: "25/03/2026", m: "يوم المطر السحري.. وقفنا تحت المطر والبحر قدامنا، وكأن الدنيا كانت بتبارك حبنا. كان يوم من الخيال مش هنساه أبداً. 🌊🌧️", img: "IMG-20260323-WA0052.jpg" }
+    ];
 
-    // إخفاء الأقسام السابقة وإظهار الجديد
-    if (num === 1) {
-        document.getElementById('video-section').style.display = 'none';
-    } else {
-        const prev = document.getElementById(`surp-${num-1}`);
-        if(prev) prev.style.display = 'none';
-    }
-    
-    const next = document.getElementById(`surp-${num}`);
-    if(next) {
-        next.style.display = 'flex';
-        setTimeout(() => {
-            next.style.opacity = '1';
-            next.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
-    }
+    moments.forEach(m => {
+        const isVid = m.img.toLowerCase().endsWith('.mp4');
+        const card = document.createElement('div');
+        card.className = 'moments-card';
+        card.innerHTML = `
+            <span class="moment-date">${m.t}</span>
+            <div class="media-container">
+                ${isVid ? `<video src="${m.img}" controls></video>` : `<img src="${m.img}">`}
+            </div>
+            <p class="moment-desc">${m.m}</p>
+        `;
+        list.appendChild(card);
+
+        // التحكم في الصوت مع الفيديوهات
+        if (isVid) {
+            const vid = card.querySelector('video');
+            vid.onplay = () => timelineAudio.pause();
+            vid.onpause = () => timelineAudio.play();
+            vid.onended = () => timelineAudio.play();
+        }
+    });
 }
 
-// سيستم القلوب الطائرة
-setInterval(() => {
-    const container = document.getElementById('heart-container');
-    if(!container) return;
-    const heart = document.createElement('div');
-    heart.className = 'heart';
-    heart.innerHTML = '❤️';
-    heart.style.left = Math.random() * 100 + 'vw';
-    heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
-    container.appendChild(heart);
-    setTimeout(() => heart.remove(), 4000);
-}, 200);
+function showVideo() { 
+    stopAllSounds(); 
+    document.getElementById('timeline-section').style.display = 'none'; 
+    document.getElementById('video-section').style.display = 'flex'; 
+}
 
-// تشغيل العداد عند البداية
-window.onload = () => {
-    setTimeout(startPoetryExperience, 3000); 
-};
+function nextSurprise(num) {
+    stopAllSounds();
+    if(num === 1) document.getElementById('video-section').style.display = 'none';
+    else document.getElementById(`surp-${num-1}`).style.display = 'none';
+    
+    if(num === 4) lastGiftAudio.play();
+    
+    const next = document.getElementById(`surp-${num}`);
+    next.style.display = 'flex';
+    setTimeout(() => next.style.opacity = "1", 100);
+}
+
+// القلوب الطائرة
+setInterval(() => {
+    const heart = document.createElement('div');
+    heart.className = 'heart'; heart.innerHTML = '❤️';
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.fontSize = (Math.random() * 20 + 30) + "px";
+    document.getElementById('heart-container').appendChild(heart);
+    setTimeout(() => heart.remove(), 6000);
+}, 200);
 </script>
 </body>
 </html>
